@@ -1,10 +1,23 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../supabaseClient";
-import { Table, Button, Space, Checkbox } from "antd";
+import {
+  Layout,
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Typography,
+  Space,
+  Checkbox,
+} from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../style/table.css";
 
-const TableList = () => {
+const { Option } = Select;
+
+const TableList = ({ onAdd }) => {
   return (
     <div className="table-list">
       <h4>Daftar Isi</h4>
@@ -12,7 +25,7 @@ const TableList = () => {
         <option value="volvo">Minat Karir</option>
         <option value="saab">Psikotes</option>
       </select>
-      <button type="submit" id="btn-table">
+      <button type="button" id="btn-table" onClick={onAdd}>
         Tambah Soal
       </button>
     </div>
@@ -21,6 +34,8 @@ const TableList = () => {
 
 export default function CustomTable() {
   const [data, setData] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     fetchData();
@@ -49,6 +64,26 @@ export default function CustomTable() {
 
     if (error) console.log("Error updating data:", error);
     else fetchData();
+  };
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    form.resetFields();
+  };
+
+  const handleAddQuestion = async (values) => {
+    const { error } = await supabase.from("questions").insert([values]);
+
+    if (error) console.log("Error adding data:", error);
+    else {
+      fetchData();
+      setIsModalVisible(false);
+      form.resetFields();
+    }
   };
 
   const columns = [
@@ -111,7 +146,7 @@ export default function CustomTable() {
 
   return (
     <div className="table-container">
-      <TableList />
+      <TableList onAdd={showModal} />
       <Table
         columns={columns}
         dataSource={data}
@@ -119,6 +154,64 @@ export default function CustomTable() {
         pagination={{ pageSize: 10 }}
         bordered
       />
+      <Modal
+        title="Tambah Soal"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+      >
+        <Form form={form} layout="vertical" onFinish={handleAddQuestion}>
+          <Form.Item
+            name="halaman"
+            label="Halaman"
+            rules={[
+              { required: true, message: "Please input the page number!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="soal"
+            label="Soal"
+            rules={[{ required: true, message: "Please input the question!" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="minat_karir_tipe"
+            label="Minat Karir Tipe"
+            rules={[
+              {
+                required: true,
+                message: "Please select the career interest type!",
+              },
+            ]}
+          >
+            <Select placeholder="Select a career interest type">
+              <Option value="realistic">Realistic</Option>
+              <Option value="artistic">Artistic</Option>
+              <Option value="artistic">Enterpreneur</Option>
+              <Option value="artistic">Investigative</Option>
+              <Option value="artistic">Social</Option>
+              <Option value="artistic">Conventional</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="waktu"
+            label="Waktu (Detik)"
+            rules={[
+              { required: true, message: "Please input the time in seconds!" },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Tambah
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 }

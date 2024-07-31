@@ -62,6 +62,7 @@ td {
   border: none;
   background-color: rgb(3, 143, 222);
   color: white;
+  cursor: pointer;
 }
 .delete-button {
   border: none;
