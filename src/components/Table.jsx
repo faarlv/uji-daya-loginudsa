@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import supabase from "../supabaseClient";
+import { Table, Button, Space, Checkbox } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import "../style/table.css";
 
-// Initialize Supabase client
-
-function TableList() {
+const TableList = () => {
   return (
     <div className="table-list">
       <h4>Daftar Isi</h4>
@@ -17,9 +17,9 @@ function TableList() {
       </button>
     </div>
   );
-}
+};
 
-export default function Table() {
+export default function CustomTable() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -51,66 +51,74 @@ export default function Table() {
     else fetchData();
   };
 
+  const columns = [
+    {
+      title: "Halaman",
+      dataIndex: "halaman",
+      key: "halaman",
+      align: "center",
+    },
+    {
+      title: "Soal",
+      dataIndex: "soal",
+      key: "soal",
+      align: "center",
+    },
+    {
+      title: "Pilihan Jawaban",
+      key: "pilihan_jawaban",
+      render: (text, record) => (
+        <Space>
+          <Checkbox
+            checked={record.pilihan_jawaban === "Yes"}
+            onChange={() => handleCheckboxChange(record.id, "Yes")}
+          >
+            Yes
+          </Checkbox>
+          <Checkbox
+            checked={record.pilihan_jawaban === "No"}
+            onChange={() => handleCheckboxChange(record.id, "No")}
+          >
+            No
+          </Checkbox>
+        </Space>
+      ),
+      align: "center",
+    },
+    {
+      title: "Minat Karir Tipe",
+      dataIndex: "minat_karir_tipe",
+      key: "minat_karir_tipe",
+      align: "center",
+    },
+    {
+      title: "Waktu (Detik)",
+      dataIndex: "waktu",
+      key: "waktu",
+      align: "center",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Button icon={<DeleteOutlined />} onClick={() => deleteRow(record.id)}>
+          Delete
+        </Button>
+      ),
+      align: "center",
+    },
+  ];
+
   return (
     <div className="table-container">
       <TableList />
-      <table className="tabel-item">
-        <thead>
-          <tr>
-            <th>Halaman</th>
-            <th>Soal</th>
-            <th>Pilihan Jawaban</th>
-            <th>Minat Karir Tipe</th>
-            <th>Waktu (Detik)</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item) => (
-            <tr key={item.id}>
-              <td>{item.halaman}</td>
-              <td>{item.soal}</td>
-
-              <td>
-                <tr>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={item.pilihan_jawaban === "Yes"}
-                      onChange={() =>
-                        handleCheckboxChange(item.id, item.pilihan_jawaban)
-                      }
-                    />
-                    Yes
-                  </label>
-                </tr>
-                <tr>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={item.pilihan_jawaban === "No"}
-                      onChange={() =>
-                        handleCheckboxChange(item.id, item.pilihan_jawaban)
-                      }
-                    />
-                    No
-                  </label>
-                </tr>
-              </td>
-              <td>{item.minat_karir_tipe}</td>
-              <td>{item.waktu}</td>
-              <td>
-                <button
-                  className="delete-button"
-                  onClick={() => deleteRow(item.id)}
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        columns={columns}
+        dataSource={data}
+        rowKey="id"
+        pagination={{ pageSize: 10 }}
+        bordered
+      />
     </div>
   );
 }
