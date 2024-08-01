@@ -41,19 +41,17 @@ td {
 
 .table-list {
   display: flex;
-  width: 90%;
+  width: 100%;
   margin-bottom: 40px;
   align-items: center;
-  gap: 30px;
+  gap: 10px;
 }
 
-#karir {
-  width: 360px;
-  height: 35px;
-  border-radius: 5px;
-  border: none;
-  margin-left: auto;
-  padding-left: 15px;
+.container-list {
+  gap: 30px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100vw;
 }
 #btn-table {
   height: 35px;

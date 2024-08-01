@@ -11,6 +11,7 @@ import {
   Typography,
   Space,
   Checkbox,
+  Flex,
 } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import "../style/table.css";
@@ -18,16 +19,42 @@ import "../style/table.css";
 const { Option } = Select;
 
 const TableList = ({ onAdd }) => {
+  const options = [
+    {
+      value: "jack",
+      label: "Minat Karir Test",
+    },
+    {
+      value: "lucy",
+      label: "Lucy",
+    },
+    {
+      value: "Yiminghe",
+      label: "yiminghe",
+    },
+  ];
+
   return (
     <div className="table-list">
-      <h4>Daftar Isi</h4>
-      <select name="minat" id="karir">
-        <option value="volvo">Minat Karir</option>
-        <option value="saab">Psikotes</option>
-      </select>
-      <button type="button" id="btn-table" onClick={onAdd}>
-        Tambah Soal
-      </button>
+      <h4
+        style={{
+          width: 90,
+        }}
+      >
+        Daftar Isi
+      </h4>
+      <div className="container-list">
+        <Select
+          defaultValue={"Minat Karir"}
+          options={options}
+          style={{
+            width: 200,
+          }}
+        />
+        <Button type="primary" htmlType="submit" onClick={onAdd}>
+          Tambah Soal
+        </Button>
+      </div>
     </div>
   );
 };
